@@ -1,5 +1,8 @@
-import { Request, Response } from "https://deno.land/x/oak/mod.ts";
+import { Request, Response, ErrorStatus, httpErrors } from "https://deno.land/x/oak/mod.ts";
 import { MongoClient } from "https://deno.land/x/mongo@v0.12.1/mod.ts";
+import { validateJwt } from "https://deno.land/x/djwt/validate.ts";
+import { makeJwt, setExpiration, Jose, Payload } from "https://deno.land/x/djwt/create.ts";
+
 
 import {User} from '../interfaces/User.ts';
 
@@ -10,7 +13,21 @@ const db = client.database("bucketlist");
 const userModel = db.collection<User>("users");
 
 export default {
-    register: ({request, response}: {request: Request, response: Response}) => {},
+    register: async ({request, response}: {request: Request, response: Response})  => {
+        const body: User = await request.body().value
+        const email = body.email;
+        const exist = await userModel.findOne({email});
+        if(exist) {return }
+        const user: User = {
+            name: body.name,
+            email: body.email,
+            password: body.password,
+        }
+        const newUser = await userModel.insertOne({ name: user.name, email: user.email, password: user.password })
+        response.body = {
+            user: newUser
+        }
+    },
     login: ({request, response}: {request: Request, response: Response}) => {},
     getUser: ({request, response}: {request: Request, response: Response}) => {},
     getAll: ({request, response}: {request: Request, response: Response}) => {},
