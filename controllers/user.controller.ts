@@ -1,7 +1,6 @@
 import { Request, Response } from "https://deno.land/x/oak/mod.ts";
 import { MongoClient } from "https://deno.land/x/mongo@v0.12.1/mod.ts";
 import { v4 } from "https://deno.land/std/uuid/mod.ts";
-import { validateJwt } from "https://deno.land/x/djwt/validate.ts";
 import { makeJwt, setExpiration, Jose, Payload } from "https://deno.land/x/djwt/create.ts";
 
 
@@ -55,13 +54,17 @@ export default {
                 response.body = {
                     user: exists,
                     token
-                }
-            }
+                };
+            };
         }else {
             response.body = { message: "Cant find user" }
         }
     },
     getUser: ({request, response}: {request: Request, response: Response}) => {},
     getAll: ({request, response}: {request: Request, response: Response}) => {},
-    deleteUser: ({request, response}: {request: Request, response: Response}) => {}
+    deleteUser: ({request, response}: {request: Request, response: Response}) => {
+        response.body = {
+            message: "lol"
+        }
+    }
 }

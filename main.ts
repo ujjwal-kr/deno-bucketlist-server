@@ -5,6 +5,8 @@ import { MongoClient } from "https://deno.land/x/mongo@v0.12.1/mod.ts";
 import userController from "./controllers/user.controller.ts";
 import listController from "./controllers/list.controller.ts";
 
+import UserMiddleware from './middlewares/user.middleware.ts';
+
 const client = new MongoClient();
 client.connectWithUri("mongodb://localhost:27017");
 
@@ -26,9 +28,9 @@ router.get("/", ({ response }: any) => {
 
 router
   .get("/users/:id", userController.getUser)        // Gets the list of the current user
-  .post("/users/login", userController.login)
-  .post("/users/register", userController.register)
-  .delete("/users/:id", userController.deleteUser)
+  .post("/auth/login", userController.login)
+  .post("/auth/register", userController.register)
+  .delete("/users/:id", UserMiddleware , userController.deleteUser)
 
 // list routes
 
