@@ -35,7 +35,7 @@ router
 // list routes
 
 router
-  .post("/lists", listController.postItem)
+  .post("/lists", UserMiddleware, listController.postItem)
   .get("/lists/:id", listController.getItem)
   .delete("/lists/:id", listController.deleteItem)
   .patch("/lists/:id", listController.editItem)

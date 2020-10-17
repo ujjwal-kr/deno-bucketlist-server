@@ -19,34 +19,26 @@ export default {
       params: { id: string };
     },
   ) => {
-    const jwt = request.headers.get("authorization")!;
-    const data: any = validateJwt({ jwt, key: "secret", algorithm: "HS256" });
-    if (data.id !== params.id) {
-      response.status = Status.Unauthorized;
-      response.body = {
-        message: "Unauthorized",
-      };
-    } else {
       const item: ListItem | null = await listModel.findOne({ id: params.id });
-      if (!item) {
-        response.status = Status.NotFound;
-        response.body = {
-          message: "Not Found",
-        };
+      console.log(item)
+      if(!item) {
+          response.status = Status.NotFound;
+          response.body = {
+              message: "Not found"
+          }
       } else {
-        response.body = {
-          item,
-        };
+          response.body = {
+              item
+          }
       }
-    }
   },
   postItem: async (
     { request, response }: { request: Request; response: Response },
   ) => {
     const jwt = request.headers.get("authorization")!;
     const body: ListItem = await request.body().value;
-    const data: any = validateJwt({ jwt, key: "secret", algorithm: "HS256" });
-    if(body.userId !== data.id) {
+    const data: any = await validateJwt({ jwt, key: "secret", algorithm: "HS256" });
+    if(body.userId !== data.payload.id) {
         response.status = Status.Unauthorized;
         response.body = {
             message: "Unauthoized"
