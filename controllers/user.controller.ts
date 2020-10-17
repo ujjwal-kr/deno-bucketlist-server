@@ -8,12 +8,14 @@ import {
 } from "https://deno.land/x/djwt/create.ts";
 
 import { User } from "../interfaces/User.ts";
+import { ListItem } from "../interfaces/ListItem.ts";
 
 const client = new MongoClient();
 client.connectWithUri("mongodb://localhost:27017");
 
 const db = client.database("bucketlist");
 const userModel = db.collection<User>("users");
+const listModel = db.collection<ListItem>("lists");
 
 export default {
   register: async (
@@ -72,9 +74,32 @@ export default {
       response.body = { message: "Cant find user" };
     }
   },
-  getUser: (
-    { request, response }: { request: Request; response: Response },
-  ) => {},
+  getUser: async (
+    { request, response, params }: {
+      request: Request;
+      response: Response;
+      params: { id: string };
+    },
+  ) => {
+    const user: User | null = await userModel.findOne({ id: params.id });
+    if (!user) {
+      response.status = Status.NotFound;
+      response.body = { message: "Not  Found" };
+    } else {
+      const lists: ListItem[] | null = await listModel.find(
+        { userId: params.id },
+      );
+      if (!lists) {
+        response.status = Status.NotFound;
+        response.body = { message: "Not Found" };
+      } else {
+        response.body = {
+          user,
+          lists,
+        };
+      }
+    }
+  },
   getAll: (
     { request, response }: { request: Request; response: Response },
   ) => {},

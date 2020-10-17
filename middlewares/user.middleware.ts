@@ -6,11 +6,12 @@ const UserMiddleware = async (
   next: Function,
 ) => {
   const jwt = ctx.request.headers.get("authorization")!;
-  const data: any = await validateJwt({ jwt, key:"secret", algorithm: "HS256" })
+  const data: any = await validateJwt(
+    { jwt, key: "secret", algorithm: "HS256" },
+  );
   if (data.isValid) {
     next();
-  }
-  else {
+  } else {
     ctx.response.status = Status.Unauthorized;
     ctx.response.body = {
       message: "Not authorized",
