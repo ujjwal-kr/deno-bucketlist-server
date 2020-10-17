@@ -27,7 +27,7 @@ router.get("/", ({ response }: any) => {
 // User Routes
 
 router
-  .get("/users/:id", userController.getUser)        // Gets the list of the current user
+  .get("/users/:id", UserMiddleware, userController.getUser)        // Gets the list of the current user
   .post("/auth/login", userController.login)
   .post("/auth/register", userController.register)
   .delete("/users/:id", UserMiddleware , userController.deleteUser)
