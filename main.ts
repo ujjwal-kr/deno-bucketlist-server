@@ -30,15 +30,12 @@ router
   .get("/users/:id", UserMiddleware, userController.getUser)        // Gets the list of the current user
   .post("/auth/login", userController.login)
   .post("/auth/register", userController.register)
-  .delete("/users/:id", UserMiddleware , userController.deleteUser)
 
 // list routes
 
 router
   .post("/lists", UserMiddleware, listController.postItem)
   .get("/lists/:id", listController.getItem)
-  .delete("/lists/:id", listController.deleteItem)
-  .patch("/lists/:id", listController.editItem)
 
 app.use(router.routes());
 app.use(router.allowedMethods());

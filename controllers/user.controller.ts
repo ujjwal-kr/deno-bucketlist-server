@@ -99,15 +99,5 @@ export default {
         };
       }
     }
-  },
-  getAll: (
-    { request, response }: { request: Request; response: Response },
-  ) => {},
-  deleteUser: (
-    { request, response }: { request: Request; response: Response },
-  ) => {
-    response.body = {
-      message: "lol",
-    };
-  },
+  }
 };

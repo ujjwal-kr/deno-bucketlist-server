@@ -58,11 +58,5 @@ export default {
         message: "created",
       };
     }
-  },
-  editItem: (
-    { request, response }: { request: Request; response: Response },
-  ) => {},
-  deleteItem: (
-    { request, response }: { request: Request; response: Response },
-  ) => {},
+  }
 };
