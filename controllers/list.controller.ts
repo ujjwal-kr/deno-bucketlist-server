@@ -1,6 +1,7 @@
 import { Request, Response, Status } from "https://deno.land/x/oak/mod.ts";
 import { MongoClient } from "https://deno.land/x/mongo@v0.12.1/mod.ts";
 import { validateJwt } from "https://deno.land/x/djwt/validate.ts";
+import { v4 } from "https://deno.land/std/uuid/mod.ts";
 
 import { ListItem } from "../interfaces/ListItem.ts";
 
@@ -39,9 +40,30 @@ export default {
       }
     }
   },
-  postItem: (
+  postItem: async (
     { request, response }: { request: Request; response: Response },
   ) => {
+    const jwt = request.headers.get("authorization")!;
+    const body: ListItem = await request.body().value;
+    const data: any = validateJwt({ jwt, key: "secret", algorithm: "HS256" });
+    if(body.userId !== data.id) {
+        response.status = Status.Unauthorized;
+        response.body = {
+            message: "Unauthoized"
+        }
+    } else {
+        const finalList: ListItem = {
+            text: body.text,
+            id: v4.generate(),
+            userId: body.userId,
+            dateCreated: Date.now(),
+            completed: false
+        }
+        await listModel.insertOne(finalList);
+        response.body = {
+            message: "created"
+        }
+    }
   },
   editItem: (
     { request, response }: { request: Request; response: Response },
