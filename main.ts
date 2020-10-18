@@ -3,6 +3,7 @@ import { green, yellow } from "https://deno.land/std@0.53.0/fmt/colors.ts";
 import { MongoClient } from "https://deno.land/x/mongo@v0.12.1/mod.ts";
 
 import userController from "./controllers/user.controller.ts";
+import taskController from "./controllers/task.controller.ts";
 import listController from "./controllers/list.controller.ts";
 
 import UserMiddleware from './middlewares/user.middleware.ts';
@@ -28,6 +29,7 @@ router.get("/", ({ response }: any) => {
 
 router
   .get("/users/:id", UserMiddleware, userController.getUser)        // Gets the list of the current user
+  .get("/users/:id/tasks")                                          // Gets the tasks of the current user
   .post("/auth/login", userController.login)
   .post("/auth/register", userController.register)
 
@@ -36,6 +38,12 @@ router
 router
   .post("/lists", UserMiddleware, listController.postItem)
   .get("/lists/:id", listController.getItem)
+
+// task routes
+
+router
+  .get("/tasks/:id", taskController.getTask)
+  .post("/tasks", taskController.postTask)
 
 app.use(router.routes());
 app.use(router.allowedMethods());
