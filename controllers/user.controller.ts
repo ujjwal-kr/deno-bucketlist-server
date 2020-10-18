@@ -9,6 +9,7 @@ import {
 
 import { User } from "../interfaces/User.ts";
 import { ListItem } from "../interfaces/ListItem.ts";
+import { Task } from "../interfaces/Task.ts";
 
 const client = new MongoClient();
 client.connectWithUri("mongodb://localhost:27017");
@@ -16,6 +17,7 @@ client.connectWithUri("mongodb://localhost:27017");
 const db = client.database("bucketlist");
 const userModel = db.collection<User>("users");
 const listModel = db.collection<ListItem>("lists");
+const taskModel = db.collection<Task>("tasks");
 
 export default {
   register: async (
@@ -98,6 +100,23 @@ export default {
           user,
           lists,
         };
+      }
+    }
+  },
+
+  getTasks: async({request, response, params}: {request: Request, response: Response, params: {id: string}}) => {
+    const user: User | null = await userModel.findOne({ id: params.id });
+    if (!user) {
+      response.status = Status.NotFound;
+      response.body = { message: "Not  Found" };
+    } else {
+      const code = request.headers.get("code")!;
+      if(user.code == code) {
+        const tasks: Task[] | null = await taskModel.find({userId: params.id})
+        response.body = {tasks}
+      } else {
+        response.status = Status.Unauthorized;
+        response.body = {message: "Unauthorized"}
       }
     }
   }
