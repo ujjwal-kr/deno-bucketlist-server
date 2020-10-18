@@ -23,5 +23,26 @@ export default {
   postTask: async (
     { request, response }: { request: Request; response: Response },
   ) => {
+    const jwt = request.headers.get("authorization")!;
+    const body: Task = await request.body().value; 
+
+    const data: any = await validateJwt({ jwt, key: "secret", algorithm: "HS256" });
+    if (body.userId !== data.payload.id) {
+        response.status = Status.Unauthorized;
+        response.body = {
+            message: "Unauthorized"
+        }
+    } else {
+        const task: Task = {
+            id: v4.generate(),
+            description: body.description,
+            title: body.description,
+            userId: body.userId
+        }
+        await taskModel.insertOne(task)
+        response.body = {
+            message: "Saved"
+        }
+    }
   }
 };
