@@ -32,6 +32,7 @@ export default {
         name: body.name,
         id: v4.generate(),
         email,
+        code: body.code,
         password: body.password,
       };
       await userModel.insertOne(
