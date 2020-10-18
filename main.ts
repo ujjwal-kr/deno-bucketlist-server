@@ -29,7 +29,7 @@ router.get("/", ({ response }: any) => {
 
 router
   .get("/users/:id", UserMiddleware, userController.getUser)        // Gets the list of the current user
-  .get("/users/:id/tasks")                                          // Gets the tasks of the current user
+  .get("/users/:id/tasks", UserMiddleware, userController.getTasks) // Gets the tasks of the current user
   .post("/auth/login", userController.login)
   .post("/auth/register", userController.register)
 
@@ -39,10 +39,9 @@ router
   .post("/lists", UserMiddleware, listController.postItem)
   .get("/lists/:id", listController.getItem)
 
-// task routes
+// task route
 
 router
-  .get("/tasks/:id", taskController.getTask)
   .post("/tasks", taskController.postTask)
 
 app.use(router.routes());

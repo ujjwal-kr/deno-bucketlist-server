@@ -104,20 +104,28 @@ export default {
     }
   },
 
-  getTasks: async({request, response, params}: {request: Request, response: Response, params: {id: string}}) => {
+  getTasks: async (
+    { request, response, params }: {
+      request: Request;
+      response: Response;
+      params: { id: string };
+    },
+  ) => {
     const user: User | null = await userModel.findOne({ id: params.id });
     if (!user) {
       response.status = Status.NotFound;
       response.body = { message: "Not  Found" };
     } else {
       const code = request.headers.get("code")!;
-      if(user.code == code) {
-        const tasks: Task[] | null = await taskModel.find({userId: params.id})
-        response.body = {tasks}
+      if (user.code == code) {
+        const tasks: Task[] | null = await taskModel.find(
+          { userId: params.id },
+        );
+        response.body = { tasks };
       } else {
         response.status = Status.Unauthorized;
-        response.body = {message: "Unauthorized"}
+        response.body = { message: "Unauthorized" };
       }
     }
-  }
+  },
 };
